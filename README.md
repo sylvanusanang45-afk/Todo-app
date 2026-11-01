@@ -1,16 +1,77 @@
-# React + Vite
+# Todo App 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A task management web application built with React, designed to help users organize their tasks through a clean, interactive interface.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Task management** — Add and manage tasks.
+- **Task organization** — Keep track of tasks and their completion status.
+- **User authentication** — Sign up and log in with Supabase.
+- **Persistent sessions** — Maintain authentication across visits.
+- **Database integration** — Connect application data to Supabase.
+- **Responsive interface** — Use the application across different screen sizes.
 
-## React Compiler
+##  Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- JavaScript
+- Vite
+- CSS
+- Supabase
 
-## Expanding the ESLint configuration
+##  Screenshots
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+*Screenshots coming soon.*
+
+##  Getting Started
+
+### Prerequisites
+
+- Node.js (LTS recommended)
+- npm
+- A Supabase project configured for the application
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/sylvanusanang45-afk/todo-app.git
+```
+
+### 2. Navigate into the project
+
+```bash
+cd todo-app
+```
+
+### 3. Install dependencies
+
+```bash
+npm install
+```
+
+### 4. Configure environment variables
+
+Create a `.env.local` file in the project root and add the environment variables required by your Supabase configuration.
+
+Use your project's `.env.example` as a reference if available. Never commit real credentials, secret keys, or service-role keys.
+
+### 5. Start the development server
+
+```bash
+npm run dev
+```
+
+### 6. Build for production
+
+```bash
+npm run build
+```
+
+##  Project Purpose
+
+This project demonstrates practical experience building interactive web applications with React, managing application state, and integrating authentication and database services.
+
+##  Author
+
+**Sylvanus Anang**
+
