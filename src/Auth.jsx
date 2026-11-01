@@ -14,12 +14,14 @@ function Auth() {
   const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showResend, setShowResend] = useState(false);
 
   function changeMode(newMode) {
     setMode(newMode);
     setMessage("");
     setErrorMessage("");
     setPassword("");
+    setShowResend(false);
   }
 
   async function handleSubmit(e) {
@@ -38,7 +40,16 @@ function Auth() {
             password,
           });
 
-        if (error) throw error;
+        if (error) {
+          const isUnconfirmed =
+            error.message.toLowerCase().includes("email not confirmed");
+
+          if (isUnconfirmed) {
+            setShowResend(true);
+          }
+
+          throw error;
+        }
       }
 
       // SIGN UP
@@ -191,13 +202,15 @@ function Auth() {
                 Forgot password?
               </button>
 
-              <button
-                type="button"
-                className="auth-switch"
-                onClick={() => changeMode("resend")}
-              >
-                Resend confirmation email
-              </button>
+              {showResend && (
+                <button
+                  type="button"
+                  className="auth-switch"
+                  onClick={() => changeMode("resend")}
+                >
+                  Resend confirmation email
+                </button>
+              )}
 
               <span>Don't have an account?</span>
 

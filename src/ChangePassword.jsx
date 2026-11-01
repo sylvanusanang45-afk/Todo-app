@@ -110,11 +110,20 @@ function ChangePassword() {
       if (updateError) throw updateError;
 
       setMessage(
-        "Your password has been changed successfully."
+        "Password changed successfully. Redirecting to login..."
       );
 
       setPassword("");
       setConfirmPassword("");
+
+      const { error: signOutError } =
+        await supabase.auth.signOut();
+
+      if (signOutError) throw signOutError;
+
+      window.history.replaceState({}, "", "/");
+
+      window.location.reload();
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
