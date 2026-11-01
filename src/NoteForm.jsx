@@ -415,7 +415,7 @@ onClick={()=>!showForm&&setShowForm(true)}
 
 <div className="big-plus">
 
-*
++
 
 </div>
 
