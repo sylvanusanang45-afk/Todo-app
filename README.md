@@ -21,7 +21,11 @@ A task management web application built with React, designed to help users organ
 
 ##  Screenshots
 
-*Screenshots coming soon.*
+### Task Dashboard
+<img width="1366" alt="Todo App Dashboard" src="https://github.com/user-attachments/assets/a63354bf-c0d0-4847-a610-d676ee2a2624" />
+
+### Task Management
+<img width="1366" alt="Todo App Task Management" src="https://github.com/user-attachments/assets/e411981c-dd07-4132-bfea-5d361a2cecc6" />
 
 ##  Getting Started
 
