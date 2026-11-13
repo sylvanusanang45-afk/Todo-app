@@ -9,7 +9,7 @@ import NoteForm from "./NoteForm";
 import NoteItem from "./NoteItem";
 import SearchBar from "./SearchBar";
 import FilterButtons from "./FilterButtons";
-import Settings from "./Settings";
+import Settings from "./settings";
 
 function App() {
   const [session, setSession] = useState(null);
