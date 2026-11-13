@@ -574,10 +574,3 @@ grid-template-columns: 1fr;
 
 }
 */
-
-body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  background-color: red;
-}

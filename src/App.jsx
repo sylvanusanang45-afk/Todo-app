@@ -9,6 +9,7 @@ import NoteForm from "./NoteForm";
 import NoteItem from "./NoteItem";
 import SearchBar from "./SearchBar";
 import FilterButtons from "./FilterButtons";
+import Settings from "./Settings";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -22,7 +23,6 @@ function App() {
 
   const [task, setTask] = useState("");
   const [title, setTitle] = useState("");
-
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -38,9 +38,44 @@ function App() {
 
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
+  const [editTitle, setEditTitle] = useState("");
+  const [editStartDate, setEditStartDate] = useState("");
+  const [editEndDate, setEditEndDate] = useState("");
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const [lists, setLists] = useState([]);
   const [tags, setTags] = useState([]);
+
+  const [showSettings, setShowSettings] = useState(false);
+
+  // Load saved preferences
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("todo-theme") || "light"
+  );
+
+  const [sortOrder, setSortOrder] = useState(
+    () => localStorage.getItem("todo-sort") || "oldest"
+  );
+
+  const [layout, setLayout] = useState(
+    () => localStorage.getItem("todo-layout") || "comfortable"
+  );
+
+  // Apply theme whenever it changes
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("todo-theme", theme);
+  }, [theme]);
+
+  // Keep preferences saved
+  useEffect(() => {
+    localStorage.setItem("todo-sort", sortOrder);
+  }, [sortOrder]);
+
+  useEffect(() => {
+    localStorage.setItem("todo-layout", layout);
+  }, [layout]);
 
   /* =========================
      CHECK LOGIN AND RECOVERY
@@ -221,7 +256,7 @@ function App() {
       return;
     }
 
-    setNotes([...notes, data]);
+    setNotes((previousNotes) => [...previousNotes, data]);
 
     setTask("");
     setTitle("");
@@ -236,6 +271,19 @@ function App() {
   ========================= */
 
   async function deleteNote(id) {
+    const result = await Swal.fire({
+      title: "Delete this task?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#777",
+    });
+
+    if (!result.isConfirmed) return;
+
     const { error } = await supabase
       .from("tasks")
       .delete()
@@ -243,10 +291,30 @@ function App() {
 
     if (error) {
       console.log(error.message);
+
+      Swal.fire({
+        icon: "error",
+        title: "Couldn't delete task",
+        text: "Please try again.",
+      });
+
       return;
     }
 
-    setNotes(notes.filter((note) => note.id !== id));
+    setNotes((previousNotes) =>
+      previousNotes.filter((note) => note.id !== id)
+    );
+
+    if (editingId === id) {
+      cancelEdit();
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Task deleted",
+      timer: 1200,
+      showConfirmButton: false,
+    });
   }
 
   /* =========================
@@ -272,8 +340,8 @@ function App() {
       return;
     }
 
-    setNotes(
-      notes.map((note) => (note.id === id ? data : note))
+    setNotes((previousNotes) =>
+      previousNotes.map((note) => (note.id === id ? data : note))
     );
   }
 
@@ -283,7 +351,22 @@ function App() {
 
   function startEdit(note) {
     setEditingId(note.id);
-    setEditText(note.text);
+    setEditText(note.text || "");
+    setEditTitle(note.title || "");
+    setEditStartDate(note.startDate || "");
+    setEditEndDate(note.endDate || "");
+  }
+
+  /* =========================
+     CANCEL EDIT
+  ========================= */
+
+  function cancelEdit() {
+    setEditingId(null);
+    setEditText("");
+    setEditTitle("");
+    setEditStartDate("");
+    setEditEndDate("");
   }
 
   /* =========================
@@ -291,26 +374,46 @@ function App() {
   ========================= */
 
   async function saveEdit(id) {
-    if (!editText.trim()) return;
+    if (!editText.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Task cannot be empty",
+        text: "Please enter some task details before saving.",
+      });
+      return;
+    }
+
+    const updatedFields = {
+      title: editTitle.trim(),
+      text: editText.trim(),
+      startDate: editStartDate,
+      endDate: editEndDate,
+    };
 
     const { data, error } = await supabase
       .from("tasks")
-      .update({ text: editText })
+      .update(updatedFields)
       .eq("id", id)
       .select()
       .single();
 
     if (error) {
       console.log(error.message);
+
+      Swal.fire({
+        icon: "error",
+        title: "Couldn't save changes",
+        text: "Please try again.",
+      });
+
       return;
     }
 
-    setNotes(
-      notes.map((note) => (note.id === id ? data : note))
+    setNotes((previousNotes) =>
+      previousNotes.map((note) => (note.id === id ? data : note))
     );
 
-    setEditingId(null);
-    setEditText("");
+    cancelEdit();
   }
 
   /* =========================
@@ -330,8 +433,8 @@ function App() {
       return;
     }
 
-    setNotes(
-      notes.map((note) => (note.id === id ? data : note))
+    setNotes((previousNotes) =>
+      previousNotes.map((note) => (note.id === id ? data : note))
     );
   }
 
@@ -450,12 +553,21 @@ function App() {
     return matchesSearch && matchesDate && matchesList && matchesTag;
   });
 
-  const displayedNotes = filteredNotes.filter((note) => {
-    if (taskView === "active") return !note.completed;
-    if (taskView === "completed") return note.completed;
+  // Apply task view and selected sorting preference
+  const displayedNotes = filteredNotes
+    .filter((note) => {
+      if (taskView === "active") return !note.completed;
+      if (taskView === "completed") return note.completed;
+      return true;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
 
-    return true;
-  });
+      return sortOrder === "newest"
+        ? dateB - dateA
+        : dateA - dateB;
+    });
 
   const activeNotes = notes.filter((note) => !note.completed);
   const completedNotes = notes.filter((note) => note.completed);
@@ -509,7 +621,7 @@ function App() {
         return;
       }
 
-      setLists([...lists, data.name]);
+      setLists((previousLists) => [...previousLists, data.name]);
     });
   }
 
@@ -554,18 +666,18 @@ function App() {
         await updateNote(note.id, { list: newList });
       }
 
-      setLists(
-        lists.map((item) => (item === list ? newList : item))
+      setLists((previousLists) =>
+        previousLists.map((item) => (item === list ? newList : item))
       );
 
-      setNotes(
-        notes.map((note) =>
+      setNotes((previousNotes) =>
+        previousNotes.map((note) =>
           note.list === list ? { ...note, list: newList } : note
         )
       );
 
-      setSelectedLists(
-        selectedLists.map((item) => (item === list ? newList : item))
+      setSelectedLists((previousLists) =>
+        previousLists.map((item) => (item === list ? newList : item))
       );
     });
   }
@@ -617,16 +729,16 @@ function App() {
 
       setLists(newLists);
 
-      setNotes(
-        notes.map((note) =>
+      setNotes((previousNotes) =>
+        previousNotes.map((note) =>
           note.list === list
             ? { ...note, list: newDefaultList }
             : note
         )
       );
 
-      setSelectedLists(
-        selectedLists.filter((item) => item !== list)
+      setSelectedLists((previousLists) =>
+        previousLists.filter((item) => item !== list)
       );
     });
   }
@@ -666,7 +778,7 @@ function App() {
         return;
       }
 
-      setTags([...tags, data.name]);
+      setTags((previousTags) => [...previousTags, data.name]);
     });
   }
 
@@ -717,12 +829,12 @@ function App() {
         await updateNote(note.id, { tags: newTags });
       }
 
-      setTags(
-        tags.map((item) => (item === tag ? newTag : item))
+      setTags((previousTags) =>
+        previousTags.map((item) => (item === tag ? newTag : item))
       );
 
-      setNotes(
-        notes.map((note) => {
+      setNotes((previousNotes) =>
+        previousNotes.map((note) => {
           if (!(note.tags || []).includes(tag)) return note;
 
           return {
@@ -734,12 +846,12 @@ function App() {
         })
       );
 
-      setSelectedTags(
-        selectedTags.map((item) => (item === tag ? newTag : item))
+      setSelectedTags((previousTags) =>
+        previousTags.map((item) => (item === tag ? newTag : item))
       );
 
-      setSelectedFilterTags(
-        selectedFilterTags.map((item) => (item === tag ? newTag : item))
+      setSelectedFilterTags((previousTags) =>
+        previousTags.map((item) => (item === tag ? newTag : item))
       );
     });
   }
@@ -780,10 +892,12 @@ function App() {
         return;
       }
 
-      setTags(tags.filter((item) => item !== tag));
+      setTags((previousTags) =>
+        previousTags.filter((item) => item !== tag)
+      );
 
-      setNotes(
-        notes.map((note) => {
+      setNotes((previousNotes) =>
+        previousNotes.map((note) => {
           if (!(note.tags || []).includes(tag)) return note;
 
           return {
@@ -793,12 +907,12 @@ function App() {
         })
       );
 
-      setSelectedTags(
-        selectedTags.filter((item) => item !== tag)
+      setSelectedTags((previousTags) =>
+        previousTags.filter((item) => item !== tag)
       );
 
-      setSelectedFilterTags(
-        selectedFilterTags.filter((item) => item !== tag)
+      setSelectedFilterTags((previousTags) =>
+        previousTags.filter((item) => item !== tag)
       );
     });
   }
@@ -808,7 +922,17 @@ function App() {
   ========================= */
 
   async function signOut() {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.log(error.message);
+
+      Swal.fire({
+        icon: "error",
+        title: "Couldn't sign out",
+        text: "Please try again.",
+      });
+    }
   }
 
   /* =========================
@@ -832,12 +956,24 @@ function App() {
   ========================= */
 
   return (
-    <div className="app">
+    <div
+      className={`app ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}
+      data-theme={theme}
+    >
       <aside className="sidebar">
         <div className="sidebar-top">
           <div className="menu-header">
             <h2>Menu</h2>
-            <span className="menu-icon">☰</span>
+
+            <button
+              type="button"
+              className="menu-icon menu-toggle"
+              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              onClick={() => setSidebarCollapsed((previous) => !previous)}
+            >
+              ☰
+            </button>
           </div>
 
           <div className="search-box">
@@ -873,6 +1009,7 @@ function App() {
                   key={list}
                 >
                   <button
+                    type="button"
                     className="list-filter"
                     onClick={() => toggleListFilter(list)}
                   >
@@ -882,14 +1019,26 @@ function App() {
                   </button>
 
                   <div className="item-actions">
-                    <button onClick={() => renameList(list)}>✎</button>
-                    <button onClick={() => deleteList(list)}>🗑</button>
+                    <button
+                      type="button"
+                      aria-label={`Rename ${list}`}
+                      onClick={() => renameList(list)}
+                    >
+                      ✎
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={`Delete ${list}`}
+                      onClick={() => deleteList(list)}
+                    >
+                      🗑
+                    </button>
                   </div>
                 </div>
               );
             })}
 
-            <button className="add-list" onClick={addList}>
+            <button type="button" className="add-list" onClick={addList}>
               <span>＋</span>
               Add New Category
             </button>
@@ -907,6 +1056,7 @@ function App() {
                   key={tag}
                 >
                   <button
+                    type="button"
                     className="tag-filter"
                     onClick={() => toggleTagFilter(tag)}
                   >
@@ -914,27 +1064,49 @@ function App() {
                   </button>
 
                   <div className="tag-actions">
-                    <button onClick={() => renameTag(tag)}>✎</button>
-                    <button onClick={() => deleteTag(tag)}>🗑</button>
+                    <button
+                      type="button"
+                      aria-label={`Rename ${tag}`}
+                      onClick={() => renameTag(tag)}
+                    >
+                      ✎
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={`Delete ${tag}`}
+                      onClick={() => deleteTag(tag)}
+                    >
+                      🗑
+                    </button>
                   </div>
                 </div>
               ))}
 
-              <button onClick={addTag}>+ Add Tag</button>
+              <button type="button" onClick={addTag}>
+                + Add Tag
+              </button>
             </div>
           </div>
         </div>
 
         <div className="sidebar-bottom">
-          <div>
+          <button
+            type="button"
+            className="sidebar-bottom-action"
+            onClick={() => setShowSettings(true)}
+          >
             <span>☷</span>
             Settings
-          </div>
+          </button>
 
-          <div onClick={signOut}>
+          <button
+            type="button"
+            className="sidebar-bottom-action"
+            onClick={signOut}
+          >
             <span>↪</span>
             Sign out
-          </div>
+          </button>
         </div>
       </aside>
 
@@ -943,6 +1115,7 @@ function App() {
 
         <div className="task-view-toggle">
           <button
+            type="button"
             className={taskView === "all" ? "selected" : ""}
             onClick={() => setTaskView("all")}
           >
@@ -950,6 +1123,7 @@ function App() {
           </button>
 
           <button
+            type="button"
             className={taskView === "active" ? "selected" : ""}
             onClick={() => setTaskView("active")}
           >
@@ -957,6 +1131,7 @@ function App() {
           </button>
 
           <button
+            type="button"
             className={taskView === "completed" ? "selected" : ""}
             onClick={() => setTaskView("completed")}
           >
@@ -964,7 +1139,7 @@ function App() {
           </button>
         </div>
 
-        <div className="wall">
+        <div className={`wall ${layout}`}>
           {displayedNotes.map((note) => (
             <NoteItem
               key={note.id}
@@ -975,7 +1150,14 @@ function App() {
               editingId={editingId}
               editText={editText}
               setEditText={setEditText}
+              editTitle={editTitle}
+              setEditTitle={setEditTitle}
+              editStartDate={editStartDate}
+              setEditStartDate={setEditStartDate}
+              editEndDate={editEndDate}
+              setEditEndDate={setEditEndDate}
               saveEdit={saveEdit}
+              cancelEdit={cancelEdit}
               updateNote={updateNote}
               lists={lists}
               tags={tags}
@@ -1001,6 +1183,19 @@ function App() {
           />
         </div>
       </main>
+
+      {showSettings && (
+        <Settings
+          userEmail={session.user.email}
+          theme={theme}
+          sortOrder={sortOrder}
+          layout={layout}
+          onThemeChange={setTheme}
+          onSortChange={setSortOrder}
+          onLayoutChange={setLayout}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
     </div>
   );
 }

@@ -2118,3 +2118,888 @@ grid-template-columns:1fr;
     font-size: 26px;
   }
 }
+
+
+/* ================================
+   FEEDBACK FIXES
+================================ */
+
+/* Sidebar toggle button */
+.menu-toggle {
+  border: none;
+  background: transparent;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.menu-toggle:hover {
+  background: #e5e5e7;
+}
+
+/* Collapsed sidebar */
+.app.sidebar-collapsed .sidebar {
+  width: 72px;
+  min-width: 72px;
+  flex: 0 0 72px;
+  padding: 28px 12px;
+  overflow: hidden;
+  transition: width 0.25s ease, padding 0.25s ease;
+}
+
+.app.sidebar-collapsed .menu-header {
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.app.sidebar-collapsed .menu-header h2 {
+  display: none;
+}
+
+.app.sidebar-collapsed .sidebar {
+  width: 72px;
+  min-width: 72px;
+  flex: 0 0 72px;
+  padding: 28px 12px;
+  overflow: hidden;
+}
+
+.app.sidebar-collapsed .sidebar-top {
+  width: 100%;
+}
+
+.app.sidebar-collapsed .menu-header {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.app.sidebar-collapsed .menu-header h2 {
+  display: none;
+}
+
+.app.sidebar-collapsed .sidebar .menu-toggle {
+  display: block;
+  margin: 0 auto;
+  flex-shrink: 0;
+  visibility: visible;
+  opacity: 1;
+  position: relative;
+  z-index: 10;
+}
+
+/* Hide sidebar content but keep the hamburger accessible */
+.app.sidebar-collapsed .sidebar-top > :not(.menu-header) {
+  display: none;
+}
+
+.app.sidebar-collapsed .sidebar-bottom {
+  display: none;
+}
+
+/* Sidebar buttons */
+.sidebar-bottom button {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 16px;
+  color: #555;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebar-bottom button:hover {
+  color: #222;
+}
+
+/* Edit title */
+.edit-title-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  padding: 12px;
+  font-size: 20px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* Edit dates */
+.edit-date-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.edit-date-fields div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.edit-date-fields label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+}
+
+.edit-date-fields input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  padding: 9px;
+  background: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+}
+
+/* Edit action buttons */
+.edit-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.edit-actions button {
+  flex: 1;
+  border: none;
+  padding: 11px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-actions .save-note {
+  background: #292929;
+  color: white;
+}
+
+.edit-actions .cancel-edit {
+  background: #dedede;
+  color: #333;
+}
+
+.edit-actions button:hover {
+  opacity: 0.85;
+}
+
+/* Keep signup/login text on one line */
+.auth-switch-container {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+  .app.sidebar-collapsed .sidebar {
+    width: 100%;
+    min-width: 100%;
+    flex: none;
+    min-height: 64px;
+    height: 64px;
+    padding: 12px 20px;
+  }
+
+  .app.sidebar-collapsed .menu-header {
+    justify-content: flex-start;
+  }
+
+  .edit-date-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+/* SETTINGS MODAL */
+
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(20, 20, 20, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.settings-panel {
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #ffffff;
+  color: #292a2d;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.settings-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.settings-header h2 {
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+
+.settings-header p {
+  margin: 0;
+  color: #858585;
+  font-size: 14px;
+}
+
+.settings-close {
+  border: none;
+  background: #f1f1f1;
+  color: #333;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.settings-section {
+  padding: 20px 0;
+  border-top: 1px solid #eeeeee;
+}
+
+.settings-section h3 {
+  margin: 0 0 16px;
+  font-size: 15px;
+}
+
+.settings-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.settings-option:last-child {
+  margin-bottom: 0;
+}
+
+.settings-option strong {
+  font-size: 14px;
+}
+
+.settings-option p {
+  margin: 5px 0 0;
+  color: #888888;
+  font-size: 12px;
+}
+
+.settings-option select {
+  min-width: 125px;
+  padding: 9px 10px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #333333;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.settings-done {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border: none;
+  border-radius: 9px;
+  background: #292a2d;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.settings-done:hover {
+  background: #444444;
+}
+
+@media (max-width: 500px) {
+  .settings-panel {
+    padding: 20px;
+  }
+
+  .settings-option {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .settings-option select {
+    width: 100%;
+  }
+}
+
+
+/* =========================
+   SETTINGS MODAL
+========================= */
+
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(20, 20, 20, 0.48);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(3px);
+}
+
+.settings-panel {
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #ffffff;
+  color: #292a2d;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: settingsAppear 0.2s ease-out;
+}
+
+@keyframes settingsAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.settings-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.settings-header h2 {
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+
+.settings-header p {
+  margin: 0;
+  color: #858585;
+  font-size: 14px;
+}
+
+.settings-close {
+  border: none;
+  background: #f1f1f1;
+  color: #333;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 23px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.settings-close:hover {
+  background: #e4e4e4;
+}
+
+.settings-section {
+  padding: 20px 0;
+  border-top: 1px solid #eeeeee;
+}
+
+.settings-section h3 {
+  margin: 0 0 16px;
+  font-size: 15px;
+}
+
+.settings-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.settings-option:last-child {
+  margin-bottom: 0;
+}
+
+.settings-option strong {
+  font-size: 14px;
+}
+
+.settings-option p {
+  margin: 5px 0 0;
+  color: #888888;
+  font-size: 12px;
+}
+
+.settings-option select {
+  min-width: 135px;
+  padding: 9px 10px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #333333;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.settings-done {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border: none;
+  border-radius: 9px;
+  background: #292a2d;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.settings-done:hover {
+  background: #444444;
+}
+
+/* =========================
+   DARK THEME
+========================= */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="dark"] body {
+  background: #17191f;
+  color: #e8e9ed;
+}
+
+[data-theme="dark"] .app {
+  background: #17191f;
+  color: #e8e9ed;
+}
+
+[data-theme="dark"] .sidebar {
+  background: #20232b;
+  color: #e8e9ed;
+  border-color: #30343e;
+}
+
+[data-theme="dark"] .main-content {
+  background: #17191f;
+  color: #e8e9ed;
+}
+
+[data-theme="dark"] .page-title,
+[data-theme="dark"] .menu-header h2 {
+  color: #f1f2f5;
+}
+
+[data-theme="dark"] .sidebar-label {
+  color: #999eaa;
+}
+
+[data-theme="dark"] .sidebar button,
+[data-theme="dark"] .task-view-toggle button {
+  color: #d5d7de;
+}
+
+[data-theme="dark"] .sidebar-bottom-action:hover,
+[data-theme="dark"] .list-filter:hover,
+[data-theme="dark"] .tag-filter:hover {
+  background: #30343e;
+}
+
+[data-theme="dark"] .task-view-toggle button {
+  background: #252933;
+  border-color: #363b47;
+}
+
+[data-theme="dark"] .task-view-toggle button.selected {
+  background: #414957;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .search-box input,
+[data-theme="dark"] .sidebar input {
+  background: #292d37;
+  color: #f1f2f5;
+  border-color: #3a404d;
+}
+
+[data-theme="dark"] .search-box input::placeholder,
+[data-theme="dark"] .sidebar input::placeholder {
+  color: #9ba1ad;
+}
+
+[data-theme="dark"] .settings-panel {
+  background: #242832;
+  color: #f1f2f5;
+}
+
+[data-theme="dark"] .settings-section {
+  border-color: #3a404d;
+}
+
+[data-theme="dark"] .settings-header p,
+[data-theme="dark"] .settings-option p {
+  color: #a5aab5;
+}
+
+[data-theme="dark"] .settings-option select {
+  background: #303541;
+  color: #f1f2f5;
+  border-color: #454b59;
+}
+
+[data-theme="dark"] .settings-close {
+  background: #363b47;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .settings-close:hover {
+  background: #454b59;
+}
+
+/* =========================
+   COMPACT TASK LAYOUT
+========================= */
+
+.wall.compact {
+  gap: 12px;
+}
+
+.wall.compact > * {
+  padding: 14px;
+}
+
+.wall.compact .note,
+.wall.compact .note-card,
+.wall.compact .task-card {
+  padding: 14px;
+}
+
+.wall.compact h2,
+.wall.compact h3 {
+  margin-bottom: 6px;
+}
+
+.wall.compact p {
+  line-height: 1.4;
+}
+
+/* =========================
+   DARK THEME TASK CARDS
+========================= */
+
+[data-theme="dark"] .wall .note,
+[data-theme="dark"] .wall .note-card,
+[data-theme="dark"] .wall .task-card {
+  color: #292a2d;
+}
+
+/* =========================
+   RESPONSIVE SETTINGS
+========================= */
+
+@media (max-width: 500px) {
+  .settings-panel {
+    padding: 20px;
+  }
+
+  .settings-option {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .settings-option select {
+    width: 100%;
+  }
+}
+
+
+
+/* =========================================
+   COMPLETE DARK THEME TEXT & CONTRAST FIX
+========================================= */
+
+/* Main application */
+[data-theme="dark"] body,
+[data-theme="dark"] .app {
+  background: #17191f;
+  color: #e8e9ed;
+}
+
+[data-theme="dark"] .sidebar {
+  background: #20232b;
+  border-color: #363b47;
+  color: #e8e9ed;
+}
+
+[data-theme="dark"] .main-content {
+  background: #17191f;
+  color: #e8e9ed;
+}
+
+/* Headings and sidebar text */
+[data-theme="dark"] .page-title,
+[data-theme="dark"] .menu-header h2 {
+  color: #f1f2f5;
+}
+
+[data-theme="dark"] .sidebar-label {
+  color: #a5aab5;
+}
+
+[data-theme="dark"] .menu-icon {
+  color: #e8e9ed;
+}
+
+/* Sidebar buttons and category text */
+[data-theme="dark"] .sidebar button {
+  color: #dfe2e9;
+}
+
+[data-theme="dark"] .sidebar button:hover {
+  background-color: #303541;
+}
+
+[data-theme="dark"] .list-item,
+[data-theme="dark"] .list-filter,
+[data-theme="dark"] .list-filter b,
+[data-theme="dark"] .item-actions button {
+  color: #e0e3eb;
+}
+
+[data-theme="dark"] .list-item.filter-selected {
+  background: #343a47;
+}
+
+[data-theme="dark"] .sidebar-tag {
+  background: #343a47;
+}
+
+[data-theme="dark"] .sidebar-tag .tag-filter,
+[data-theme="dark"] .sidebar-tag .tag-actions button {
+  color: #f1f2f5;
+}
+
+[data-theme="dark"] .sidebar-tag.filter-selected {
+  background: #505a6b;
+}
+
+[data-theme="dark"] .tags > button {
+  background: #343a47;
+  color: #f1f2f5;
+}
+
+[data-theme="dark"] .sidebar-bottom button {
+  color: #dfe2e9;
+}
+
+[data-theme="dark"] .sidebar-bottom button:hover {
+  color: #ffffff;
+}
+
+/* Search */
+[data-theme="dark"] .search-input {
+  background: #292d37;
+}
+
+[data-theme="dark"] .search-input span {
+  color: #c6cad4;
+}
+
+[data-theme="dark"] .search-input input {
+  background: transparent;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .search-input input::placeholder {
+  color: #a5aab5;
+}
+
+/* Task view buttons */
+[data-theme="dark"] .task-view-toggle button {
+  background: #292e39;
+  color: #dfe2e9;
+}
+
+[data-theme="dark"] .task-view-toggle button:hover {
+  background: #373e4c;
+}
+
+[data-theme="dark"] .task-view-toggle button.selected {
+  background: #596579;
+  color: #ffffff;
+}
+
+/* IMPORTANT: Actual sticky note text */
+[data-theme="dark"] .sticky-note {
+  color: #292a2d;
+}
+
+[data-theme="dark"] .sticky-note .sticky-title,
+[data-theme="dark"] .sticky-note .sticky-text,
+[data-theme="dark"] .sticky-note .edit-title {
+  color: #292a2d;
+}
+
+[data-theme="dark"] .sticky-note .note-dates,
+[data-theme="dark"] .sticky-note .note-dates small,
+[data-theme="dark"] .sticky-note .edit-dates,
+[data-theme="dark"] .sticky-note .edit-dates small {
+  color: #454545;
+}
+
+[data-theme="dark"] .sticky-note .note-list-select,
+[data-theme="dark"] .sticky-note .edit-list-select {
+  color: #292a2d;
+}
+
+[data-theme="dark"] .sticky-note .note-tag,
+[data-theme="dark"] .sticky-note .edit-tags button {
+  color: #333333;
+}
+
+[data-theme="dark"] .sticky-note .note-footer button {
+  color: #292a2d;
+}
+
+/* Task editing fields */
+[data-theme="dark"] .sticky-note .edit-title-input,
+[data-theme="dark"] .sticky-note .edit-note textarea,
+[data-theme="dark"] .sticky-note .edit-date-fields input {
+  color: #292a2d;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] .sticky-note .edit-date-fields label,
+[data-theme="dark"] .sticky-note .edit-tags p {
+  color: #454545;
+}
+
+/* Add task card */
+[data-theme="dark"] .add-note-card {
+  background: #292e39;
+}
+
+[data-theme="dark"] .add-note-card:hover {
+  background: #373e4c;
+}
+
+[data-theme="dark"] .add-note-card .big-plus {
+  color: #f1f2f5;
+}
+
+/* Add task form */
+[data-theme="dark"] .add-note-form input,
+[data-theme="dark"] .add-note-form textarea,
+[data-theme="dark"] .add-note-form select {
+  background: #ffffff;
+  color: #292a2d;
+}
+
+[data-theme="dark"] .date-fields label,
+[data-theme="dark"] .tag-selector p {
+  color: #e0e3eb;
+}
+
+[data-theme="dark"] .tag-selector button {
+  background: #414958;
+  color: #ffffff;
+}
+
+/* Settings modal */
+[data-theme="dark"] .settings-panel {
+  background: #242832;
+  color: #f1f2f5;
+}
+
+[data-theme="dark"] .settings-header h2,
+[data-theme="dark"] .settings-section h3,
+[data-theme="dark"] .settings-option strong {
+  color: #f1f2f5;
+}
+
+[data-theme="dark"] .settings-header p,
+[data-theme="dark"] .settings-option p {
+  color: #b7bdc9;
+}
+
+[data-theme="dark"] .settings-section {
+  border-color: #3a404d;
+}
+
+[data-theme="dark"] .settings-option select {
+  background: #303541;
+  color: #ffffff;
+  border-color: #454b59;
+}
+
+[data-theme="dark"] .settings-close {
+  background: #363b47;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .settings-done {
+  background: #e8e9ed;
+  color: #20232b;
+}
+
+/* Ensure form controls remain readable */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  color-scheme: light;
+}
+
+/* Keep Settings dropdowns dark */
+[data-theme="dark"] .settings-option select {
+  color-scheme: dark;
+}
+
+/* Compact layout */
+.wall.compact {
+  gap: 12px;
+}
+
+.wall.compact .sticky-note,
+.wall.compact .add-note-card {
+  min-height: 280px;
+}
+
+.wall.compact .sticky-note {
+  padding: 16px;
+}
+
+.wall.compact .sticky-title {
+  font-size: 19px;
+  margin-bottom: 7px;
+}
+
+.wall.compact .sticky-text {
+  font-size: 15px;
+  line-height: 1.4;
+}
